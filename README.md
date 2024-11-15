@@ -8,7 +8,7 @@ npm install -D tailwindcss postcss autoprefixer
 
 npm install react-router-dom
 
-npm install react-icons
+npm install react-select
 
 npm install
 
