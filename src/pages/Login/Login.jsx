@@ -36,7 +36,7 @@ const Login = ({ onLogin }) => {
                 const response = await axios.post("http://localhost:3000/api/login", {username, password});            
                 setSuccess(true);
             } catch (err) {
-                if (err.response) {
+                if (err.response && err.response.data) {
                     // Lấy message từ response của backend
                     setError(err.response.data.message);  // Lưu message vào state error
                 } else {
@@ -60,6 +60,7 @@ const Login = ({ onLogin }) => {
         if (!validateUsername(username) || !validatePassword(password)) {
             return;
         }
+        handleSubmit
         onLogin();
         localStorage.setItem('username', username);
     };
@@ -148,6 +149,7 @@ const Login = ({ onLogin }) => {
                             </p>
                         )}
                     </div>
+                    
                     <div>
                         <label
                             htmlFor="password"
