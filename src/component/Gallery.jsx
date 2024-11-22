@@ -1,7 +1,6 @@
 /* eslint-disable no-unused-vars */
 import React, { useState } from "react";
 import Select from "react-select";
-// import { Menu, Transition } from '@headlessui/react';
 
 // Sample data for books
 const books = [
@@ -37,10 +36,16 @@ const BookGallery = () => {
         favorite: false,
         price: { min: 0, max: 20 },
     });
+    
 
     const [currentPage, setCurrentPage] = useState(1);
     const [booksPerPage] = useState(6);  // Number of books per page
 
+    const updateNumCart = () => {
+      const NUM_CART = parseInt(localStorage.getItem('num_cart')) 
+      const new_NUM_CART = NUM_CART+1
+      localStorage.setItem('num_cart', new_NUM_CART)
+    }
     // Handle filter changes
     const handleFilterChange = (selectedOption, actionMeta) => {
         const { name } = actionMeta;
@@ -214,15 +219,15 @@ const BookGallery = () => {
         {/* Book Gallery Section */}
         <div className="w-full md:w-3/4 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
             {currentBooks.map((book) => (
-                <div key={book.id} className="bg-white rounded-lg shadow-lg overflow-hidden">
+                <div key={book.id} className="bg-grey rounded-lg shadow-lg overflow-hidden h-[440px]">
                     <img src={book.image} alt={book.title} className="w-full h-64 object-cover" />
                     <div className="p-4">
                         <h3 className="text-lg font-semibold">{book.title}</h3>
                         <p className="text-sm text-gray-600">{book.author}</p>
                         <p className="text-sm text-gray-600">{book.publisher}</p>
                         <p className="text-md font-semibold text-blue-600">{book.price} $</p>
-                        <button className="mt-2 px-4 py-2 bg-blue-500 text-white rounded-full">
-                        Add to Cart
+                        <button onClick={updateNumCart()} className="mt-2 px-4 py-2 bg-blue-500 text-white rounded-full">
+                          Add to Cart
                         </button>
                     </div>
                 </div>
