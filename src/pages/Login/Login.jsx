@@ -1,6 +1,7 @@
 /* eslint-disable no-unused-vars */
 import React, { useState } from 'react';
 import PropTypes from 'prop-types';
+import axios from "axios";
 import Logo from '../../images/BK/logo.png';
 
 const Login = ({ onLogin }) => {
@@ -8,7 +9,45 @@ const Login = ({ onLogin }) => {
     const [username, setUsername] = useState("");
     const [password, setPassword] = useState("");
     const [error, setError] = useState({ username: "", password: "" });
+    const [success, setSuccess] = useState(false);
 
+    const handleSubmit = async (e) => {
+        e.preventDefault();
+
+        // Reset lỗi trước khi gửi yêu cầu
+        setError({ username: "", password: "" });
+
+        // Kiểm tra form
+        if (!username) {
+            setError((prevError) => ({
+                ...prevError,
+                username: "Username is required",
+            }));
+        }
+        if (!password) {
+            setError((prevError) => ({
+                ...prevError,
+                password: "Password is required",
+            }));
+        }
+
+        if(username && password) {
+            try {
+                const response = await axios.post("http://localhost:3000/api/login", {username, password});            
+                setSuccess(true);
+            } catch (err) {
+                if (err.response) {
+                    // Lấy message từ response của backend
+                    setError(err.response.data.message);  // Lưu message vào state error
+                } else {
+                    // Lỗi khác (như mất kết nối mạng)
+                    setError("Something went wrong, please try again.");
+                }
+            }
+        }
+
+    };
+    
     const handleToggleForm = () => {
         setIsSignUp(!isSignUp);
         setUsername("");
@@ -31,7 +70,6 @@ const Login = ({ onLogin }) => {
             return;
         }
         // Perform sign-up logic here
-        console.log("User signed up:", username);
         alert("Account created successfully!");
         setIsSignUp(false);
     };

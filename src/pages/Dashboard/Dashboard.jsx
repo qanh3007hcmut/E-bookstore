@@ -5,6 +5,7 @@ import TopNav from '../../component/TopNav'
 import Gallery from '../../component/Gallery'
 
 const Dashboard = ({ onLogout }) => {
+    localStorage.setItem('num_cart', 0)
     return (
         <div>
             <TopNav/>
