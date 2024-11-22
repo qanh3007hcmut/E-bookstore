@@ -4,3 +4,5 @@ const router = express.Router();
 
 router.get('/book', getBook.book);
 router.get('/image', getBook.image);
+
+module.exports = router;

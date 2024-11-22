@@ -12,9 +12,10 @@ async function book(req, res, next) {
 }
 
 async function image(req, res, next) {
-
+    return res.status(200).json("a");
 }
 
 module.exports = {
-    book
+    book,
+    image
 };

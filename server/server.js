@@ -1,6 +1,7 @@
 const express = require('express');
 const cors = require('cors');
 const cookieParser = require('cookie-parser');
+const apiRouter = require('./routes');
 
 const port = 3000;
 const app = express();
@@ -19,7 +20,6 @@ app.get('/', (req, res) => {
     res.send('Connected!');
 })
 
-const apiRouter = require('./routes');
 app.use('/api', apiRouter);
 
 app.use((err, req, res, next) => {
