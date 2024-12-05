@@ -1,11 +1,10 @@
 /* eslint-disable no-unused-vars */
 import React, {useState, useEffect} from 'react'
-import PropTypes from 'prop-types'
 import TopNav from '../../component/TopNav'
 import Gallery from '../../component/Gallery'
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 
-const Dashboard = ({ onLogout }) => {
+const Dashboard = () => {
     const books = [
         { id: 1, title: "The Ride of a Lifetime: Lessons Learned from 15 Years as CEO of the Walt Disney Company", genre: "Fiction", series: "Series A", author: "Author 1", publisher: "Publisher A", price: 10, isFavorite: false, image: "https://images-na.ssl-images-amazon.com/images/S/compressed.photo.goodreads.com/books/1556036622i/44525305.jpg" },
         { id: 2, title: "Book 2", genre: "Science", series: "Series B", author: "Author 2", publisher: "Publisher B", price: 15, isFavorite: true, image: "https://i.gr-assets.com/images/S/compressed.photo.goodreads.com/books/1692883158l/197773418._SY475_.jpg" },
@@ -28,35 +27,46 @@ const Dashboard = ({ onLogout }) => {
         { id: 19, title: "Book 19", genre: "Fantasy", series: "Series R", author: "Author 17", publisher: "Publisher R", price: 24, isFavorite: false, image: "book19.jpg" },
         { id: 20, title: "Book 20", genre: "Science", series: "Series S", author: "Author 18", publisher: "Publisher S", price: 26, isFavorite: true, image: "book20.jpg" }
     ];
+    const location = useLocation();
     const navigate = useNavigate();
+
     const [cart_list, setCart_list] = useState([])
     const [cart_num, setCart_num] = useState(0);
 
+    useEffect(() => {
+        // Check if location.state is available
+        if (location.state && location.state.cartList && location.state.cartNum !== undefined) {
+            const { cartList, cartNum } = location.state;
+            // Set state only if cart_list or cart_num are not yet set
+            setCart_list(cartList);
+            setCart_num(cartNum);
+        }
+    }, [location.state]); 
+    
     const goto_book = (id) => {
         const book = books.find((b) => b.id === id);
-        navigate(`/dashboard/book/${book.id}`, { state: book });
+        navigate(`/dashboard/book/${book.id}`, { state: { book, books, cartNum: cart_num, cartList:cart_list}});
     }   
+    
+    useEffect(() => {
+        if(cart_num) console.log("use Effect", cart_num)
+        // localStorage.setItem('cart_num', cart_num)
+    },[cart_num])
 
-    const add_cart = (id) => {
-        const book = books.find((b) => b.id === id);
-        if (book) {
-            setCart_list((prevCart) => [...prevCart, book]);
-            setCart_num((prevCartNum) => prevCartNum + 1);
-        } else console.log(`Book with ID ${id} not found`);
-    }
+    // useEffect(() => {
+    //     if (location.pathname === '/dashboard') {
+    //         setCart_num(localStorage.getItem('cart_num'))
+    //     }
+    // }, [location]);
 
     return (
         <div>
-            <TopNav cartNum={cart_num} books={books} gotoBook={goto_book}/>
+            <TopNav cartNum={cart_num} cartList={cart_list} books={books} gotoBook={goto_book}/>
             <div className="pt-20">
-                <Gallery books={books} cart_update={add_cart} gotoID={goto_book} className="mt-10"/>
+                <Gallery books={books} gotoID={goto_book} className="mt-10"/>
             </div>
         </div>
     )
 }
-
-Dashboard.propTypes = {
-    onLogout: PropTypes.func.isRequired, 
-};
 
 export default Dashboard

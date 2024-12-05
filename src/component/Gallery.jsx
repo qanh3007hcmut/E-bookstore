@@ -7,7 +7,7 @@ import Select from "react-select";
 
   
 
-const BookGallery = ({books, cart_update, gotoID}) => {
+const BookGallery = ({books, gotoID}) => {
     const [filters, setFilters] = useState({
         genre: null,
         series: null,
@@ -198,11 +198,10 @@ const BookGallery = ({books, cart_update, gotoID}) => {
                     <div className="p-4">
                         <p className="absolute bottom-4 left-3 text-2xl px-4 py-2 bg-white rounded-xl font-semibold text-blue-600">{book.price} $</p>
                         <button onClick={() => {
-                            cart_update(book.id)
                             gotoID(book.id)
                           }}
                           className="absolute mt-2 px-4 py-2 text-2xl bottom-3 right-3 bg-blue-700 text-white rounded-full transition-transform transform hover:scale-105 hover:bg-blue-400">
-                            Add to Cart
+                            Add to cart
                         </button>
                     </div>
                 </div>
@@ -269,9 +268,9 @@ BookGallery.propTypes = {
       price: PropTypes.number.isRequired,
       isFavorite: PropTypes.bool.isRequired,
       image: PropTypes.string.isRequired,
+      quantity: PropTypes.number.isRequired
     })
   ).isRequired,
-  cart_update: PropTypes.func.isRequired,
   gotoID: PropTypes.func.isRequired
 };
 
