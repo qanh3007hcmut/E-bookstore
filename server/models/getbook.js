@@ -1,21 +1,25 @@
+const database = require('../db/database');
 const db = require('../db/database');
 
-async function book(req, res, next) {
-    const query = 'SELECT * FROM book';
-    db.query(query, (err, results) => {
-        if (err) {
-            console.error('Query error.', err);
-            return res.status(500).json({ message: 'Server error' });
-        }
-        return res.status(200).json(results);
-    });
+async function book() {
+    const [result] = await database.query('SELECT * FROM book');
+    return result;
 }
 
-async function image(req, res, next) {
-    return res.status(200).json("a");
-}
+const bookByID = (id) => {
+    return new Promise((resolve, reject) => {
+        const placeholders = id.map(() => '?').join(',');
+        const query = `SELECT book_id, image_name FROM book WHERE book_id IN (${placeholders})`;
+        database.query(query, id, (err, results) => {
+            if (err) {
+                return reject(err);
+            }
+            resolve(results);
+        });
+    });
+};
 
 module.exports = {
     book,
-    image
+    bookByID,
 };
