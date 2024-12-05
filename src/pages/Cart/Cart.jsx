@@ -22,7 +22,7 @@ const Cart = () => {
         console.log("+ called")
         setCart_list((prevCart) => 
             prevCart.map((book) => 
-                book.id === id ? { ...book, quantity: book.quantity + 1 } : book
+                book.book_id === id ? { ...book, quantity: book.quantity + 1 } : book
             )
         );
     };
@@ -30,25 +30,25 @@ const Cart = () => {
     const handleDecreasebyOne = (id) => {
         console.log("- called")
         setCart_list((prevCart) => {
-            const bookInCart = prevCart.find((book) => book.id === id);
+            const bookInCart = prevCart.find((book) => book.book_id === id);
             
             if (bookInCart && bookInCart.quantity > 1) {
                 // Nếu quantity > 1, giảm quantity đi 1
                 return prevCart.map((book) =>
-                    book.id === id ? { ...book, quantity: book.quantity - 1 } : book
+                    book.book_id === id ? { ...book, quantity: book.quantity - 1 } : book
                 );
             } else if (bookInCart && bookInCart.quantity === 1) {
                 // Nếu quantity là 1, loại bỏ sách khỏi giỏ
-                return prevCart.filter((book) => book.id !== id);
+                return prevCart.filter((book) => book.book_id !== id);
             }
             return prevCart;
         });
     
-        setCart_num((prevCartNum) => new Set(cart_list.map((book) => book.id)).size);
+        setCart_num((prevCartNum) => new Set(cart_list.map((book) => book.book_id)).size);
     };
 
     const handleDelete = (id) => {
-        setCart_list((prevCart) => prevCart.filter((book) => book.id !== id));
+        setCart_list((prevCart) => prevCart.filter((book) => book.book_id !== id));
         setCart_num((prevCartNum) => prevCartNum - 1);
     };
     

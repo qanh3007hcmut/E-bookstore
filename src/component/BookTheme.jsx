@@ -13,8 +13,8 @@ const BookTheme = () => {
     const [cart_list, setCart_list] = useState(cartList)
 
     const goto_book = (id) => {
-        const book = books.find((b) => b.id === id);
-        navigate(`/dashboard/book/${book.id}`, { state: { book, books, cartNum: cart_num, cartList:cart_list}});
+        const book = books.find((b) => b.book_id === id);
+        navigate(`/dashboard/book/${book.book_id}`, { state: { book, books, cartNum: cart_num, cartList:cart_list}});
     }   
 
     useEffect(() => {
@@ -22,9 +22,9 @@ const BookTheme = () => {
     },[cart_list])
 
     const add_cart = (id) => {
-        const Abook = books.find((b) => b.id === id);
+        const Abook = books.find((b) => b.book_id === id);
         if (Abook) {
-            const isInCart = cart_list.find((b) => b.id === id);
+            const isInCart = cart_list.find((b) => b.book_id === id);
     
             if (isInCart) {
                 // Nếu sách đã có trong giỏ hàng, hỏi người dùng
@@ -68,8 +68,8 @@ const BookTheme = () => {
                 <div className="flex flex-col items-center border-r pr-10 w-1/3 h-full">
                     {/* Ảnh bìa */}
                     <img
-                        src={book.image}
-                        alt={book.title}
+                        src={book.image_name}
+                        alt={book.book_name}
                         className="w-fit h-auto justify-center object-cover rounded-lg shadow-lg mb-4"
                     />
 
@@ -79,9 +79,9 @@ const BookTheme = () => {
                     </button>
                     {/* Giá tiền */}
                     <button 
-                        onClick={() => {add_cart(book.id)}}
+                        onClick={() => {add_cart(book.book_id)}}
                         className="flex items-center border-2 border-blue-500 bg-transparent text-blue-500 px-4 py-2 rounded-md hover:bg-gray-100">
-                        Add to cart - ${book.price}
+                        Add to cart - ${book.book_price}
                     </button>
 
 
@@ -90,7 +90,7 @@ const BookTheme = () => {
                 {/* Cột 2 và 3: Nội dung */}
                 <div className="flex-grow w-2/3 overflow-y-auto p-6">
                     {/* Title */}
-                    <h1 className="text-5xl font-bold font-serif text-gray-900 mb-4">{book.title}</h1>
+                    <h1 className="text-5xl font-bold font-serif text-gray-900 mb-4">{book.book_name}</h1>
 
                     {/* Author */}
                     <p className="text-xl text-gray-600 mb-2">
@@ -103,7 +103,7 @@ const BookTheme = () => {
                     </p>
 
                     {/* Content */}
-                    <p className="text-gray-700 mb-4">{content}</p>
+                    <p className="text-gray-700 mb-4">{book.book_description}</p>
 
                     {/* Genres */}
                     <div className="flex flex-wrap gap-2">

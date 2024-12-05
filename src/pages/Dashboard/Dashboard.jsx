@@ -3,9 +3,10 @@ import React, {useState, useEffect} from 'react'
 import TopNav from '../../component/TopNav'
 import Gallery from '../../component/Gallery'
 import { useNavigate, useLocation } from "react-router-dom";
+import axios from "axios";
 
 const Dashboard = () => {
-    const books = [
+    const b = [
         { id: 1, title: "The Ride of a Lifetime: Lessons Learned from 15 Years as CEO of the Walt Disney Company", genre: "Fiction", series: "Series A", author: "Author 1", publisher: "Publisher A", price: 10, isFavorite: false, image: "https://images-na.ssl-images-amazon.com/images/S/compressed.photo.goodreads.com/books/1556036622i/44525305.jpg" },
         { id: 2, title: "Book 2", genre: "Science", series: "Series B", author: "Author 2", publisher: "Publisher B", price: 15, isFavorite: true, image: "https://i.gr-assets.com/images/S/compressed.photo.goodreads.com/books/1692883158l/197773418._SY475_.jpg" },
         { id: 3, title: "Book 3", genre: "History", series: "Series A", author: "Author 3", publisher: "Publisher C", price: 12, isFavorite: false, image: "https://i.gr-assets.com/images/S/compressed.photo.goodreads.com/books/1662566820l/60321447.jpg" },
@@ -27,37 +28,47 @@ const Dashboard = () => {
         { id: 19, title: "Book 19", genre: "Fantasy", series: "Series R", author: "Author 17", publisher: "Publisher R", price: 24, isFavorite: false, image: "book19.jpg" },
         { id: 20, title: "Book 20", genre: "Science", series: "Series S", author: "Author 18", publisher: "Publisher S", price: 26, isFavorite: true, image: "book20.jpg" }
     ];
+    const [books, setBook_data] = useState([])
+
     const location = useLocation();
     const navigate = useNavigate();
 
     const [cart_list, setCart_list] = useState([])
     const [cart_num, setCart_num] = useState(0);
 
+    const fetchBooks = async () => {
+        try {
+            // Gọi API với query params
+            const response = await axios.get('http://localhost:3000/api/books/allbooks');
+
+            if (response.status === 200) {
+                setBook_data(response.data.books)
+            }
+        } catch (err) {
+            console.log('Failed to fetch books');
+        }
+    };
+
     useEffect(() => {
-        // Check if location.state is available
+        fetchBooks();
+    },[]);
+
+    useEffect(() => {
+        console.log(books);
+    },[books]);
+
+    useEffect(() => {
         if (location.state && location.state.cartList && location.state.cartNum !== undefined) {
             const { cartList, cartNum } = location.state;
-            // Set state only if cart_list or cart_num are not yet set
             setCart_list(cartList);
             setCart_num(cartNum);
         }
     }, [location.state]); 
     
     const goto_book = (id) => {
-        const book = books.find((b) => b.id === id);
-        navigate(`/dashboard/book/${book.id}`, { state: { book, books, cartNum: cart_num, cartList:cart_list}});
+        const book = books.find((b) => b.book_id === id);
+        navigate(`/dashboard/book/${book.book_id}`, { state: { book, books, cartNum: cart_num, cartList:cart_list}});
     }   
-    
-    useEffect(() => {
-        if(cart_num) console.log("use Effect", cart_num)
-        // localStorage.setItem('cart_num', cart_num)
-    },[cart_num])
-
-    // useEffect(() => {
-    //     if (location.pathname === '/dashboard') {
-    //         setCart_num(localStorage.getItem('cart_num'))
-    //     }
-    // }, [location]);
 
     return (
         <div>

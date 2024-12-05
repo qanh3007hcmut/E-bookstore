@@ -1,3 +1,4 @@
+/* eslint-disable no-undef */
 const database = require('../db/database');
 
 const bookFilter = async ({ genre, author, publisher, isFavorite, username }) => {
@@ -45,6 +46,38 @@ const bookFilter = async ({ genre, author, publisher, isFavorite, username }) =>
     return rows;
 };
 
+const getPage = async (pages, limit) => {
+    try {
+        const offset = (pages - 1) * limit;
+        const [totalBooks] = await database.query('SELECT COUNT(*) as count FROM ebookstores.book');
+        const totalCount = totalBooks[0].count;
+        const totalPages = Math.ceil(totalCount / limit);
+        const booksQuery = `SELECT * FROM ebookstores.book LIMIT ? OFFSET ?`;
+        const [books] = await database.query(booksQuery, [limit, offset]);
+        return {
+            data: books,
+            totalPages: totalPages,
+            currentPage: pages,
+        };
+    } catch (error) {
+        console.error('Error fetching books:', error);
+        throw new Error('Could not fetch books');
+    }
+};
+
+const allBooks = async () => {
+    try {
+        const booksQuery = `SELECT * FROM ebookstores.book LIMIT 100`;
+        const [books] = await database.query(booksQuery);
+        return books;
+    } catch (error) {
+        console.error('Error fetching books:', error);
+        throw new Error('Could not fetch books');
+    }
+};
+
 module.exports = {
     bookFilter,
+    getPage,
+    allBooks
 };

@@ -1,21 +1,18 @@
+/* eslint-disable no-undef */
 const db = require('../db/database');
 
 async function find(username, password) {
-    query = 'SELECT * FROM customer_account WHERE username = ?';
-    db.query(query, [username], (err, results) => {
-        if (err) {
-            console.error('Query error.', err);
-            return 0;
-        }
-        if (results.length === 0) {
-            return 0;
-        }
-        const user = results[0];
-        bcrypt.compare(password, user.password, (err, isMatch) => {
-            if (isMatch) return 2;
-            else return 1;
-        });
-    });
+    const query = "SELECT username, password FROM customer_account  WHERE username = ?"
+  try {
+    const [rows] = await db.query(query, [username]);
+    const result = rows[0]
+    if(result) {
+      if(result.password === password) return 2;
+      else return 1; 
+    } else return 0;
+  } catch (err) {
+    console.error('Error executing query:', err);
+  }
 }
 
 // 0 la error hoac sai username, 1 la sai pass, 2 la successful

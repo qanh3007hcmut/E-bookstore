@@ -1,3 +1,4 @@
+/* eslint-disable no-undef */
 const express = require('express');
 const cors = require('cors');
 const cookieParser = require('cookie-parser');
@@ -7,7 +8,7 @@ const port = 3000;
 const app = express();
 
 const corsOptions = {
-    origin: 'http://localhost:3000',
+    origin: 'http://localhost:5173',
     credentials: true,
 };
 

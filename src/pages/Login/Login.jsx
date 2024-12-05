@@ -11,10 +11,7 @@ const Login = ({ onLogin }) => {
     const [error, setError] = useState({ username: "", password: "" });
     const [success, setSuccess] = useState(false);
 
-    const handleSubmit = async (e) => {
-        e.preventDefault();
-
-        // Reset lỗi trước khi gửi yêu cầu
+    const handleSubmit = async () => {
         setError({ username: "", password: "" });
 
         // Kiểm tra form
@@ -33,19 +30,18 @@ const Login = ({ onLogin }) => {
 
         if(username && password) {
             try {
-                const response = await axios.post("http://localhost:3000/api/login", {username, password});            
-                setSuccess(true);
+                const response = await axios.post("http://localhost:3000/api/login/login", 
+                    {username, password},
+                    {headers: { 'Content-Type': 'application/json' } }
+                );            
+                if(response.status === 200) setSuccess(true);
+                else if(response.status === 402) setError("Wrong password");
+                else setError("No user Info found, let's do register below")
             } catch (err) {
-                if (err.response && err.response.data) {
-                    // Lấy message từ response của backend
-                    setError(err.response.data.message);  // Lưu message vào state error
-                } else {
-                    // Lỗi khác (như mất kết nối mạng)
-                    setError("Something went wrong, please try again.");
-                }
+                if (err.response && err.response.data) setError(err.response.data.message);
+                else setError("Something went wrong, please try again.");
             }
         }
-
     };
     
     const handleToggleForm = () => {
@@ -60,9 +56,11 @@ const Login = ({ onLogin }) => {
         if (!validateUsername(username) || !validatePassword(password)) {
             return;
         }
-        handleSubmit
-        onLogin();
-        localStorage.setItem('username', username);
+        handleSubmit()
+        if(success) {
+            onLogin();
+            localStorage.setItem('username', username);
+        } 
     };
 
     const handleSignUpClick = (e) => {
@@ -179,7 +177,7 @@ const Login = ({ onLogin }) => {
                     <div>
                         <button
                             type="submit"
-                            onClick={isSignUp ? handleSignUpClick : handleLoginClick}
+                            onClick={(e) => (isSignUp ? handleSignUpClick(e) : handleLoginClick(e))}
                             className="w-full py-2 px-4 bg-blue-600 text-white font-semibold rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
                         >
                             {isSignUp ? "Sign up" : "Login"}

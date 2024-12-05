@@ -4,71 +4,68 @@ import PropTypes from 'prop-types'
 import Select from "react-select";
 
 // Sample data for books
+const BookGallery = ({ books, gotoID }) => {
+  const [filters, setFilters] = useState({
+    genre: null,
+    series: null,
+    author: null,
+    publisher: null,
+    favorite: false,
+    price: { min: 0, max: 100 },
+  });
 
-  
+  const [currentPage, setCurrentPage] = useState(1);
+  const [booksPerPage] = useState(3);
 
-const BookGallery = ({books, gotoID}) => {
-    const [filters, setFilters] = useState({
-        genre: null,
-        series: null,
-        author: null,
-        publisher: null,
-        favorite: false,
-        price: { min: 0, max: 20 },
-    });
+  // Handle filter changes
+  const handleFilterChange = (selectedOption, actionMeta) => {
+    const { name } = actionMeta;
+    setFilters((prev) => ({
+      ...prev,
+      [name]: selectedOption,
+    }));
+  };
 
-    const [currentPage, setCurrentPage] = useState(1);
-    const [booksPerPage] = useState(6);  
+  const handleFavoriteChange = (e) => {
+    setFilters((prev) => ({
+      ...prev,
+      favorite: e.target.checked,
+    }));
+  };
 
-    // Handle filter changes
-    const handleFilterChange = (selectedOption, actionMeta) => {
-        const { name } = actionMeta;
-        setFilters((prev) => ({
-        ...prev,
-        [name]: selectedOption,
-        }));
-    };
+  const handlePriceChange = (e) => {
+    const { name, value } = e.target;
+    setFilters((prev) => ({
+      ...prev,
+      price: { ...prev.price, [name]: value },
+    }));
+  };
 
-    const handleFavoriteChange = (e) => {
-        setFilters((prev) => ({
-        ...prev,
-        favorite: e.target.checked,
-        }));
-    };
-
-    const handlePriceChange = (e) => {
-        const { name, value } = e.target;
-        setFilters((prev) => ({
-        ...prev,
-        price: { ...prev.price, [name]: value },
-        }));
-    };
-
-    const filteredBooks = books.filter((book) => {
-        return (
-            (filters.genre ? book.genre === filters.genre.value : true) &&
-            (filters.series ? book.series === filters.series.value : true) &&
-            (filters.author ? book.author === filters.author.value : true) &&
-            (filters.publisher ? book.publisher === filters.publisher.value : true) &&
-            (filters.favorite ? book.isFavorite : true) &&
-            book.price >= filters.price.min && book.price <= filters.price.max
-        );
-    });
-  
-    // Pagination logic
-    const indexOfLastBook = currentPage * booksPerPage;
-    const indexOfFirstBook = indexOfLastBook - booksPerPage;
-    const currentBooks = filteredBooks.slice(indexOfFirstBook, indexOfLastBook);
-
-    const totalPages = Math.ceil(filteredBooks.length / booksPerPage);
-
-    const handlePageChange = (pageNumber) => {
-        if (pageNumber >= 1 && pageNumber <= totalPages) {
-        setCurrentPage(pageNumber);
-        }
-    };
-
+  const filteredBooks = books.filter((book) => {
     return (
+      (filters.genre ? book.genre === filters.genre.value : true) &&
+      (filters.series ? book.series === filters.series.value : true) &&
+      (filters.author ? book.author === filters.author.value : true) &&
+      (filters.publisher ? book.publisher === filters.publisher.value : true) &&
+      (filters.favorite ? book.isFavorite : true) &&
+      book.book_price >= filters.price.min && book.book_price <= filters.price.max
+    );
+  });
+
+  // Pagination logic
+  const indexOfLastBook = currentPage * booksPerPage;
+  const indexOfFirstBook = indexOfLastBook - booksPerPage;
+  const currentBooks = filteredBooks.slice(indexOfFirstBook, indexOfLastBook);
+
+  const totalPages = Math.ceil(filteredBooks.length / booksPerPage);
+
+  const handlePageChange = (pageNumber) => {
+    if (pageNumber >= 1 && pageNumber <= totalPages) {
+      setCurrentPage(pageNumber);
+    }
+  };
+
+  return (
     <div className="container mx-auto p-4">
       <div className="flex flex-col md:flex-row space-x-4">
         {/* Filter Section */}
@@ -192,66 +189,62 @@ const BookGallery = ({books, gotoID}) => {
 
         {/* Book Gallery Section */}
         <div className="w-full md:w-3/4 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
-            {currentBooks.map((book) => (
-                <div key={book.id} className=" rounded-lg shadow-lg overflow-hidden h-[440px] transition-transform transform hover:scale-105">
-                    <img src={book.image} alt={book.title} className="w-full h-auto object-cover" />
-                    <div className="p-4">
-                        <p className="absolute bottom-4 left-3 text-2xl px-4 py-2 bg-white rounded-xl font-semibold text-blue-600">{book.price} $</p>
-                        <button onClick={() => {
-                            gotoID(book.id)
-                          }}
-                          className="absolute mt-2 px-4 py-2 text-2xl bottom-3 right-3 bg-blue-700 text-white rounded-full transition-transform transform hover:scale-105 hover:bg-blue-400">
-                            Add to cart
-                        </button>
-                    </div>
-                </div>
-            ))}
+          {currentBooks.map((book) => (
+            <div key={book.book_id} className="rounded-lg shadow-lg overflow-hidden h-[440px] transition-transform transform hover:scale-105">
+              <img src={book.image_name} alt={book.book_name} className="w-full h-auto object-cover" />
+              <div className="p-4">
+                <p className="absolute bottom-4 left-3 text-2xl px-4 py-2 bg-white rounded-xl font-semibold text-blue-600">{book.book_price} $</p>
+                <button onClick={() => gotoID(book.book_id)} className="absolute mt-2 px-4 py-2 text-2xl bottom-3 right-3 bg-blue-700 text-white rounded-full transition-transform transform hover:scale-105 hover:bg-blue-400">
+                  Add to cart
+                </button>
+              </div>
             </div>
+          ))}
         </div>
+      </div>
 
-        {/* Pagination Section */}
-        <nav aria-label="Page navigation example">
-            <ul className="inline-flex -space-x-px text-sm">
-            {/* Previous Button */}
-            <li>
-                <a
-                href="#"
-                onClick={() => handlePageChange(currentPage - 1)}
-                className={`flex items-center justify-center px-3 h-8 ms-0 leading-tight text-gray-500 bg-white border border-e-0 border-gray-300 rounded-s-lg hover:bg-gray-100 hover:text-gray-700 ${currentPage === 1 ? "disabled opacity-50" : ""}`}
-                >
-                Previous
-                </a>
-            </li>
+      {/* Pagination Section */}
+      <nav aria-label="Page navigation example">
+        <ul className="inline-flex -space-x-px text-sm">
+          {/* Previous Button */}
+          <li>
+            <a
+              href="#"
+              onClick={() => handlePageChange(currentPage - 1)}
+              className={`flex items-center justify-center px-3 h-8 ms-0 leading-tight text-gray-500 bg-white border border-e-0 border-gray-300 rounded-s-lg hover:bg-gray-100 hover:text-gray-700 ${currentPage === 1 ? "disabled opacity-50" : ""}`}
+            >
+              Previous
+            </a>
+          </li>
 
-            {/* Page Numbers */}
-            {[...Array(totalPages).keys()].map((index) => {
+          {/* Page Numbers */}
+          {[...Array(totalPages).keys()].map((index) => {
             const pageNumber = index + 1;
             return (
-                <li key={pageNumber}>
+              <li key={pageNumber}>
                 <a
-                    href="#"
-                    onClick={() => handlePageChange(pageNumber)}
-                    className={`flex items-center justify-center px-3 h-8 leading-tight text-gray-500 bg-white border border-gray-300 hover:bg-gray-100 hover:text-gray-700 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white 
-                    ${currentPage === pageNumber ? "text-blue-600 bg-blue-50 hover:bg-blue-100 hover:text-blue-700 animate-pulse" : ""}`}
+                  href="#"
+                  onClick={() => handlePageChange(pageNumber)}
+                  className={`flex items-center justify-center px-3 h-8 leading-tight text-gray-500 bg-white border border-gray-300 hover:bg-gray-100 hover:text-gray-700 ${currentPage === pageNumber ? "text-blue-600 bg-blue-50 hover:bg-blue-100" : ""}`}
                 >
-                    {pageNumber}
+                  {pageNumber}
                 </a>
-                </li>
+              </li>
             );
-            })}
+          })}
 
-            {/* Next Button */}
-            <li>
-                <a
-                href="#"
-                onClick={() => handlePageChange(currentPage + 1)}
-                className={`flex items-center justify-center px-3 h-8 leading-tight text-gray-500 bg-white border border-gray-300 rounded-e-lg hover:bg-gray-100 hover:text-gray-700 ${currentPage === totalPages ? "disabled opacity-50" : ""}`}
-                >
-                Next
-                </a>
-            </li>
-            </ul>
-        </nav>
+          {/* Next Button */}
+          <li>
+            <a
+              href="#"
+              onClick={() => handlePageChange(currentPage + 1)}
+              className={`flex items-center justify-center px-3 h-8 leading-tight text-gray-500 bg-white border border-e-0 border-gray-300 rounded-e-lg hover:bg-gray-100 hover:text-gray-700 ${currentPage === totalPages ? "disabled opacity-50" : ""}`}
+            >
+              Next
+            </a>
+          </li>
+        </ul>
+      </nav>
     </div>
   );
 };
@@ -259,19 +252,18 @@ const BookGallery = ({books, gotoID}) => {
 BookGallery.propTypes = {
   books: PropTypes.arrayOf(
     PropTypes.shape({
-      id: PropTypes.number.isRequired,
-      title: PropTypes.string.isRequired,
-      genre: PropTypes.string.isRequired,
-      series: PropTypes.string.isRequired,
-      author: PropTypes.string.isRequired,
-      publisher: PropTypes.string.isRequired,
-      price: PropTypes.number.isRequired,
-      isFavorite: PropTypes.bool.isRequired,
-      image: PropTypes.string.isRequired,
-      quantity: PropTypes.number.isRequired
+      book_id: PropTypes.number.isRequired,
+      book_name: PropTypes.string.isRequired,
+      book_description: PropTypes.string.isRequired,
+      book_language: PropTypes.string.isRequired,
+      book_price: PropTypes.number.isRequired,
+      image_name: PropTypes.string.isRequired,
+      inventory_quantity: PropTypes.number.isRequired,
+      publication_year: PropTypes.string.isRequired,
+      isFavorite: PropTypes.bool,
     })
   ).isRequired,
-  gotoID: PropTypes.func.isRequired
+  gotoID: PropTypes.func.isRequired,
 };
 
 export default BookGallery;
