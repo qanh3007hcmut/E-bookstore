@@ -1,33 +1,13 @@
 /* eslint-disable no-unused-vars */
 import React, { useState } from "react";
+import PropTypes from 'prop-types'
 import Select from "react-select";
 
 // Sample data for books
-const books = [
-    { id: 1, title: "Book 1", genre: "Fiction", series: "Series A", author: "Author 1", publisher: "Publisher A", price: 10, isFavorite: false, image: "book1.jpg" },
-    { id: 2, title: "Book 2", genre: "Science", series: "Series B", author: "Author 2", publisher: "Publisher B", price: 15, isFavorite: true, image: "book2.jpg" },
-    { id: 3, title: "Book 3", genre: "History", series: "Series A", author: "Author 3", publisher: "Publisher C", price: 12, isFavorite: false, image: "book3.jpg" },
-    { id: 4, title: "Book 4", genre: "Fiction", series: "Series C", author: "Author 1", publisher: "Publisher A", price: 8, isFavorite: true, image: "book4.jpg" },
-    { id: 5, title: "Book 5", genre: "Romance", series: "Series D", author: "Author 4", publisher: "Publisher D", price: 20, isFavorite: false, image: "book5.jpg" },
-    { id: 6, title: "Book 6", genre: "Mystery", series: "Series E", author: "Author 5", publisher: "Publisher E", price: 18, isFavorite: true, image: "book6.jpg" },
-    { id: 7, title: "Book 7", genre: "Fantasy", series: "Series F", author: "Author 6", publisher: "Publisher F", price: 22, isFavorite: false, image: "book7.jpg" },
-    { id: 8, title: "Book 8", genre: "Science", series: "Series G", author: "Author 7", publisher: "Publisher G", price: 16, isFavorite: true, image: "book8.jpg" },
-    { id: 9, title: "Book 9", genre: "Biography", series: "Series H", author: "Author 8", publisher: "Publisher H", price: 25, isFavorite: false, image: "book9.jpg" },
-    { id: 10, title: "Book 10", genre: "Fantasy", series: "Series I", author: "Author 9", publisher: "Publisher I", price: 30, isFavorite: true, image: "book10.jpg" },
-    { id: 11, title: "Book 11", genre: "Fiction", series: "Series J", author: "Author 1", publisher: "Publisher J", price: 14, isFavorite: true, image: "book11.jpg" },
-    { id: 12, title: "Book 12", genre: "Thriller", series: "Series K", author: "Author 10", publisher: "Publisher K", price: 18, isFavorite: false, image: "book12.jpg" },
-    { id: 13, title: "Book 13", genre: "Science", series: "Series L", author: "Author 11", publisher: "Publisher L", price: 17, isFavorite: false, image: "book13.jpg" },
-    { id: 14, title: "Book 14", genre: "Drama", series: "Series M", author: "Author 12", publisher: "Publisher M", price: 28, isFavorite: true, image: "book14.jpg" },
-    { id: 15, title: "Book 15", genre: "History", series: "Series N", author: "Author 13", publisher: "Publisher N", price: 21, isFavorite: false, image: "book15.jpg" },
-    { id: 16, title: "Book 16", genre: "Horror", series: "Series O", author: "Author 14", publisher: "Publisher O", price: 13, isFavorite: true, image: "book16.jpg" },
-    { id: 17, title: "Book 17", genre: "Romance", series: "Series P", author: "Author 15", publisher: "Publisher P", price: 19, isFavorite: false, image: "book17.jpg" },
-    { id: 18, title: "Book 18", genre: "Mystery", series: "Series Q", author: "Author 16", publisher: "Publisher Q", price: 23, isFavorite: true, image: "book18.jpg" },
-    { id: 19, title: "Book 19", genre: "Fantasy", series: "Series R", author: "Author 17", publisher: "Publisher R", price: 24, isFavorite: false, image: "book19.jpg" },
-    { id: 20, title: "Book 20", genre: "Science", series: "Series S", author: "Author 18", publisher: "Publisher S", price: 26, isFavorite: true, image: "book20.jpg" }
-  ];
+
   
 
-const BookGallery = () => {
+const BookGallery = ({books, cart_update, gotoID}) => {
     const [filters, setFilters] = useState({
         genre: null,
         series: null,
@@ -36,16 +16,10 @@ const BookGallery = () => {
         favorite: false,
         price: { min: 0, max: 20 },
     });
-    
 
     const [currentPage, setCurrentPage] = useState(1);
-    const [booksPerPage] = useState(6);  // Number of books per page
+    const [booksPerPage] = useState(6);  
 
-    const updateNumCart = () => {
-      const NUM_CART = parseInt(localStorage.getItem('num_cart')) 
-      const new_NUM_CART = NUM_CART+1
-      localStorage.setItem('num_cart', new_NUM_CART)
-    }
     // Handle filter changes
     const handleFilterChange = (selectedOption, actionMeta) => {
         const { name } = actionMeta;
@@ -219,15 +193,16 @@ const BookGallery = () => {
         {/* Book Gallery Section */}
         <div className="w-full md:w-3/4 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
             {currentBooks.map((book) => (
-                <div key={book.id} className="bg-grey rounded-lg shadow-lg overflow-hidden h-[440px]">
-                    <img src={book.image} alt={book.title} className="w-full h-64 object-cover" />
+                <div key={book.id} className=" rounded-lg shadow-lg overflow-hidden h-[440px] transition-transform transform hover:scale-105">
+                    <img src={book.image} alt={book.title} className="w-full h-auto object-cover" />
                     <div className="p-4">
-                        <h3 className="text-lg font-semibold">{book.title}</h3>
-                        <p className="text-sm text-gray-600">{book.author}</p>
-                        <p className="text-sm text-gray-600">{book.publisher}</p>
-                        <p className="text-md font-semibold text-blue-600">{book.price} $</p>
-                        <button onClick={updateNumCart()} className="mt-2 px-4 py-2 bg-blue-500 text-white rounded-full">
-                          Add to Cart
+                        <p className="absolute bottom-4 left-3 text-2xl px-4 py-2 bg-white rounded-xl font-semibold text-blue-600">{book.price} $</p>
+                        <button onClick={() => {
+                            cart_update(book.id)
+                            gotoID(book.id)
+                          }}
+                          className="absolute mt-2 px-4 py-2 text-2xl bottom-3 right-3 bg-blue-700 text-white rounded-full transition-transform transform hover:scale-105 hover:bg-blue-400">
+                            Add to Cart
                         </button>
                     </div>
                 </div>
@@ -280,6 +255,24 @@ const BookGallery = () => {
         </nav>
     </div>
   );
+};
+
+BookGallery.propTypes = {
+  books: PropTypes.arrayOf(
+    PropTypes.shape({
+      id: PropTypes.number.isRequired,
+      title: PropTypes.string.isRequired,
+      genre: PropTypes.string.isRequired,
+      series: PropTypes.string.isRequired,
+      author: PropTypes.string.isRequired,
+      publisher: PropTypes.string.isRequired,
+      price: PropTypes.number.isRequired,
+      isFavorite: PropTypes.bool.isRequired,
+      image: PropTypes.string.isRequired,
+    })
+  ).isRequired,
+  cart_update: PropTypes.func.isRequired,
+  gotoID: PropTypes.func.isRequired
 };
 
 export default BookGallery;

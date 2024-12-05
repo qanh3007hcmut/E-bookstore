@@ -5,6 +5,9 @@ import { BrowserRouter as Router, Route, Routes, Navigate } from "react-router-d
 // import pages
 import Login from '../src/pages/Login/Login'
 import Dashboard from '../src/pages/Dashboard/Dashboard'
+import Book from '../src/component/BookTheme'
+import Cart from '../src/pages/Cart/Cart'
+
 
 const App = () => {
   
@@ -34,7 +37,14 @@ const App = () => {
         <Route 
           path="/dashboard" 
           element={isLoggedIn ? <Dashboard onLogout={handleLogout} /> : <Navigate to="/login" replace />}/>
-
+        {/* Book theme */}
+        <Route
+          path="/dashboard/book/:bookID"
+          element={<Book/>}/>
+        {/* Book theme */}
+        <Route
+          path="/dashboard/cart"
+          element={<Cart/>}/>
       </Routes>
     </Router>
   );
