@@ -4,8 +4,8 @@ import PropTypes from 'prop-types'
 import { useNavigate } from 'react-router-dom';
 import Logo from "../images/BK/logo.png";
 
-const Nav = ({cartNum,cartList, nametag}) => {
-    const username = localStorage.getItem("username"); 
+const Nav = ({cartNum,cartList, nametag, name}) => {
+    const username = name;
     const navigate = useNavigate();
     const goHome = () => {
         navigate('/dashboard', { state: {cartNum, cartList}})
@@ -108,6 +108,7 @@ Nav.propTypes = {
           image: PropTypes.string.isRequired,
         })
       ).isRequired,
-    nametag: PropTypes.string.isRequired
+    nametag: PropTypes.string.isRequired,
+    name: PropTypes.string.isRequired
 };
 export default Nav;

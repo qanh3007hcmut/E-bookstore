@@ -1,9 +1,9 @@
 /* eslint-disable no-unused-vars */
-import React from "react";
+import React, {useState, useEffect} from "react";
 import PropTypes from 'prop-types';
+import axios from 'axios'
 
-const Cart_content = ({ num, list, totalPrice, increase_quantity, decrease_quantity, delete_book_order }) => {
-    // Tính tổng giá trị đơn hàng
+const Cart_content = ({ num, list, totalPrice, increase_quantity, decrease_quantity, delete_book_order, info }) => {
     const sumPrice = totalPrice || list.reduce((total, book) => total + book.book_price * book.quantity, 0);
 
     const random_color = [
@@ -15,6 +15,42 @@ const Cart_content = ({ num, list, totalPrice, increase_quantity, decrease_quant
         "bg-pink-200 text-pink-800",
         "bg-orange-200 text-orange-800",
     ];
+    const [newOrder, setNewOrder] = useState({
+        customer_id: null,
+        status: null,
+        payment_method: "By Credits",
+        money_paid : null,
+        order_items: []
+    })
+    
+    const postOrder = async (order_data) => {
+        try {
+            const response = await axios.post("http://localhost:3000/api/order/post", order_data);
+            console.log("orderID: ", response.data.orderId);
+        } catch (err) {
+            console.error('Error creating order:', err);
+        }
+    }
+
+    const createOrder = () => {
+        const orderItems = list.map(book => ({
+            book_id: book.book_id,
+            quantity: book.quantity,  
+        }));
+
+        setNewOrder(prevOrder => ({
+            ...prevOrder,
+            customer_id: info.username,
+            status: "Completed",
+            money_paid: sumPrice,  
+            order_items: orderItems,
+        }));
+    }
+
+    useEffect(() => {
+        if(newOrder.customer_id !== null) postOrder(newOrder)
+        console.log(newOrder);
+    }, [newOrder])
     return (
         <div className="pt-20 p-4 flex h-screen mx-8"> {/* Set height to screen height */}
             {/* Phần Giỏ hàng bên trái */}
@@ -99,21 +135,15 @@ const Cart_content = ({ num, list, totalPrice, increase_quantity, decrease_quant
                     {/* Địa chỉ */}
                     <div className="flex items-center gap-4">
                         <span className="font-semibold">Location:</span>
-                        <input 
-                            type="text" 
-                            placeholder="Nhập địa chỉ" 
-                            className="border p-2 w-full rounded-md text-sm"
-                        />
+                        <span className="font-medium border p-2 border-black w-full rounded-md text-sm">{info.customer_address}</span>
                     </div>
 
                     {/* Số điện thoại */}
                     <div className="flex items-center gap-4">
                         <span className="font-semibold">Phone number:</span>
-                        <input 
-                            type="text" 
-                            placeholder="Nhập số điện thoại" 
-                            className="border p-2 w-full rounded-md text-sm"
-                        />
+                        <span className="font-medium border p-2 border-black w-full rounded-md text-sm">
+                            {info.customer_phone}
+                        </span>
                     </div>
 
                     {/* Giảm giá */}
@@ -127,7 +157,9 @@ const Cart_content = ({ num, list, totalPrice, increase_quantity, decrease_quant
                     </div>
 
                     {/* Nút xác nhận đơn hàng */}
-                    <button className="w-full py-2 bg-blue-500 text-white font-semibold rounded-md shadow-xl hover:bg-blue-700 border border-blue-500 hover:border-black">
+                    <button
+                        onClick={() => {createOrder()}} 
+                        className="w-full py-2 bg-blue-500 text-white font-semibold rounded-md shadow-xl hover:bg-blue-700 border border-blue-500 hover:border-black">
                         Confirm Order
                     </button>
                 </div>
@@ -155,7 +187,8 @@ Cart_content.propTypes = {
     totalPrice: PropTypes.number,
     increase_quantity:PropTypes.func.isRequired,
     decrease_quantity:PropTypes.func.isRequired,
-    delete_book_order:PropTypes.func.isRequired
+    delete_book_order:PropTypes.func.isRequired,
+    info: PropTypes.object.isRequired
 };
 
 export default Cart_content;
