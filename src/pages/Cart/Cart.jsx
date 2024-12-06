@@ -18,6 +18,10 @@ const Cart = () => {
         }
     }, [location.state]); 
 
+    useEffect(() => {
+        setCart_num(cart_list.length); 
+    }, [cart_list]);
+
     const handleIncreasebyOne = (id) => {
         console.log("+ called")
         setCart_list((prevCart) => 
@@ -28,28 +32,22 @@ const Cart = () => {
     };
 
     const handleDecreasebyOne = (id) => {
-        console.log("- called")
         setCart_list((prevCart) => {
             const bookInCart = prevCart.find((book) => book.book_id === id);
             
             if (bookInCart && bookInCart.quantity > 1) {
-                // Nếu quantity > 1, giảm quantity đi 1
                 return prevCart.map((book) =>
                     book.book_id === id ? { ...book, quantity: book.quantity - 1 } : book
                 );
             } else if (bookInCart && bookInCart.quantity === 1) {
-                // Nếu quantity là 1, loại bỏ sách khỏi giỏ
                 return prevCart.filter((book) => book.book_id !== id);
             }
             return prevCart;
-        });
-    
-        setCart_num((prevCartNum) => new Set(cart_list.map((book) => book.book_id)).size);
+        });    
     };
 
     const handleDelete = (id) => {
         setCart_list((prevCart) => prevCart.filter((book) => book.book_id !== id));
-        setCart_num((prevCartNum) => prevCartNum - 1);
     };
     
 
@@ -58,6 +56,7 @@ const Cart = () => {
             <Navigation 
                 cartNum={cart_num} 
                 cartList={cart_list} 
+                nametag="Cart"
             />
             <div className="">
                 <Content 

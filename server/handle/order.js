@@ -10,7 +10,7 @@ const getOrder = async (req, res) => {
         if (!orders.length) {
             return res.status(404).json({ success: false, message: "No orders found." });
         }
-        res.status(200).json({ success: true, data: orders });
+        res.status(200).json({ success: true, orders: orders });
     } catch (error) {
         console.error(error);
         res.status(500).json({ success: false, message: 'Internal server error' });

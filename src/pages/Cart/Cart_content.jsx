@@ -6,7 +6,15 @@ const Cart_content = ({ num, list, totalPrice, increase_quantity, decrease_quant
     // Tính tổng giá trị đơn hàng
     const sumPrice = totalPrice || list.reduce((total, book) => total + book.book_price * book.quantity, 0);
 
-
+    const random_color = [
+        "bg-red-200 text-red-800",
+        "bg-blue-200 text-blue-800",
+        "bg-green-200 text-green-800",
+        "bg-yellow-200 text-yellow-800",
+        "bg-purple-200 text-purple-800",
+        "bg-pink-200 text-pink-800",
+        "bg-orange-200 text-orange-800",
+    ];
     return (
         <div className="pt-20 p-4 flex h-screen mx-8"> {/* Set height to screen height */}
             {/* Phần Giỏ hàng bên trái */}
@@ -23,15 +31,28 @@ const Cart_content = ({ num, list, totalPrice, increase_quantity, decrease_quant
                                 />
                                 <div className="flex flex-col space-y-2 ml-4 w-full">
                                     <h3 className="text-3xl font-bold text-left text-gray-900">{book.book_name}</h3>
-                                    <p className="text-sm text-gray-700 font-medium">Author: {book.author}</p>
+                                    <p className="text-xl text-gray-600">
+                                        <span className="font-medium font-mono">Authors:</span> 
+                                        {book.authors.split(',').map((author, index) => (
+                                            <span 
+                                                key={index} 
+                                                className="ml-5 hover:underline underline-offset-3 font-serif font-extrabold"
+                                            >
+                                                {author.trim()}
+                                            </span>
+                                        ))}
+                                    </p>
                                     
                                     {/* Genre(s) with badges */}
-                                    <div className="flex flex-wrap space-x-2">
-                                    {/* {book.genre.split(",").map((genre, index) => (
-                                        <span key={index} className="bg-blue-200 text-blue-800 text-xs px-2 py-1 rounded-full">
-                                        {genre.trim()}
-                                        </span>
-                                    ))} */}
+                                    <div className="flex flex-wrap gap-2 mb-4">
+                                        {book.genres && book.genres.split(',').map((genre, index) => (
+                                            <span 
+                                                key={index} 
+                                                className={`text-sm px-3 py-1 rounded-full ${random_color[index % random_color.length]}`}
+                                            >
+                                                {genre.trim()}
+                                            </span>
+                                        ))}
                                     </div>
                                 </div>
                                 
@@ -66,7 +87,7 @@ const Cart_content = ({ num, list, totalPrice, increase_quantity, decrease_quant
 
             {/* Phần Thông tin đơn hàng bên phải */}
             <div className="w-[400px] bg-gray-200 p-6 rounded-md h-full overflow-y-auto"> {/* h-full for full height */}
-                <h2 className="text-xl font-bold mb-4">Thông Tin Đơn Hàng</h2>
+                <h2 className="text-xl font-bold mb-4">About Your Order</h2>
                 
                 <div className="space-y-4">
                     {/* Tổng số sản phẩm và tổng giá trị */}

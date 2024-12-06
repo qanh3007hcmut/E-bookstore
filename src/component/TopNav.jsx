@@ -25,7 +25,7 @@ const TopNav = ({cartNum,cartList, gotoBook, books}) => {
         }
 
         const results = books.filter((book) =>
-            book.title.toLowerCase().includes(term.toLowerCase())
+            book.book_name.toLowerCase().includes(term.toLowerCase())
         );
         setFilteredBooks(results);
     };
@@ -68,15 +68,20 @@ const TopNav = ({cartNum,cartList, gotoBook, books}) => {
                             <ul className="absolute left-0 right-0 mt-1 bg-gray-300 border border-gray-300 rounded-lg shadow-md z-10 max-h-72 overflow-y-auto">
                                 {filteredBooks.map((book) => (
                                     <li
-                                        key={book.id}
+                                        key={book.book_id}
                                         className="px-4 py-2 hover:bg-gray-200 cursor-pointer"
                                         onClick={() => {
-                                            setSearchTerm(book.title); 
+                                            setSearchTerm(book.book_name); 
                                             setFilteredBooks([]); 
-                                            gotoBook(book.id)
+                                            gotoBook(book.book_id)
                                         }}
-                                    >
-                                        {book.title}
+                                    >   
+                                        <img
+                                            src={book.image_name}
+                                            alt={book.book_name}
+                                            className="inline-flex w-auto h-20 object-cover rounded-md mr-4"
+                                        />
+                                        <span className="inline-flex">{book.book_name}</span>
                                     </li>
                                 ))}
                             </ul>
@@ -137,29 +142,29 @@ TopNav.propTypes = {
     gotoBook: PropTypes.func.isRequired,
     cartList: PropTypes.arrayOf(
         PropTypes.shape({
-          id: PropTypes.number.isRequired,
-          title: PropTypes.string.isRequired,
-          genre: PropTypes.string.isRequired,
-          series: PropTypes.string.isRequired,
-          author: PropTypes.string.isRequired,
-          publisher: PropTypes.string.isRequired,
-          price: PropTypes.number.isRequired,
-          isFavorite: PropTypes.bool.isRequired,
-          image: PropTypes.string.isRequired,
-        })
+            book_id: PropTypes.number.isRequired,
+            book_name: PropTypes.string.isRequired,
+            book_description: PropTypes.string.isRequired,
+            book_language: PropTypes.string.isRequired,
+            book_price: PropTypes.number.isRequired,
+            image_name: PropTypes.string.isRequired,
+            inventory_quantity: PropTypes.number.isRequired,
+            publication_year: PropTypes.string.isRequired,
+            isFavorite: PropTypes.bool,
+          })
       ).isRequired,
     books: PropTypes.arrayOf(
         PropTypes.shape({
-          id: PropTypes.number.isRequired,
-          title: PropTypes.string.isRequired,
-          genre: PropTypes.string.isRequired,
-          series: PropTypes.string.isRequired,
-          author: PropTypes.string.isRequired,
-          publisher: PropTypes.string.isRequired,
-          price: PropTypes.number.isRequired,
-          isFavorite: PropTypes.bool.isRequired,
-          image: PropTypes.string.isRequired,
-        })
+            book_id: PropTypes.number.isRequired,
+            book_name: PropTypes.string.isRequired,
+            book_description: PropTypes.string.isRequired,
+            book_language: PropTypes.string.isRequired,
+            book_price: PropTypes.number.isRequired,
+            image_name: PropTypes.string.isRequired,
+            inventory_quantity: PropTypes.number.isRequired,
+            publication_year: PropTypes.string.isRequired,
+            isFavorite: PropTypes.bool,
+          })
       ).isRequired
 };
 

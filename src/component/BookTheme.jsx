@@ -53,24 +53,35 @@ const BookTheme = () => {
             console.log(`Book with ID ${id} not found`);
         }
     };
-    
-    
 
-    const content = " "
+    const random_color = [
+        "bg-red-200 text-red-800",
+        "bg-blue-200 text-blue-800",
+        "bg-green-200 text-green-800",
+        "bg-yellow-200 text-yellow-800",
+        "bg-purple-200 text-purple-800",
+        "bg-pink-200 text-pink-800",
+        "bg-orange-200 text-orange-800",
+    ];
+
+    const [isExpanded, setIsExpanded] = useState(false);
+
+    const toggleExpanded = () => setIsExpanded(!isExpanded);
+
     if (!book) return <p>No book selected</p>;
     if (!books) return <p>No book data</p>;
 
     return (
         <div>
             <TopNav cartNum={cart_num} cartList= {cart_list} books={books} gotoBook={goto_book}/>
-            <div className="pt-20 max-w-screen-xl  mx-auto p-5 h-screen flex">
+            <div className="pt-20 mx-auto p-5 max-h-screen w-auto flex">
                 {/* Cột 1: Hình ảnh và nút */}
                 <div className="flex flex-col items-center border-r pr-10 w-1/3 h-full">
                     {/* Ảnh bìa */}
                     <img
                         src={book.image_name}
                         alt={book.book_name}
-                        className="w-fit h-auto justify-center object-cover rounded-lg shadow-lg mb-4"
+                        className="w-auto h-[550px] justify-center object-cover rounded-lg shadow-lg mb-4"
                     />
 
                     {/* Nút Add to Favorite */}
@@ -93,24 +104,72 @@ const BookTheme = () => {
                     <h1 className="text-5xl font-bold font-serif text-gray-900 mb-4">{book.book_name}</h1>
 
                     {/* Author */}
-                    <p className="text-xl text-gray-600 mb-2">
-                        <strong>Author:</strong> {book.author}
+                    <p className="text-xl text-gray-600">
+                        <span className="font-black">Authors:</span> 
+                        {book.authors.split(',').map((author, index) => (
+                            <span 
+                                key={index} 
+                                className="ml-5 hover:underline underline-offset-3 font-serif font-extrabold"
+                            >
+                                {author.trim()}
+                            </span>
+                        ))}
                     </p>
 
                     {/* Publisher */}
-                    <p className="text-xl text-gray-600 mb-2">
-                        <strong>Publisher:</strong> {book.publisher}
+                    <p className="text-xl text-gray-600">
+                        <span className="font-black">Publisher:</span> 
+                        <span className="ml-5 hover:underline underline-offset-3 font-serif font-extrabold">{book.publisher}</span>
                     </p>
 
                     {/* Content */}
-                    <p className="text-gray-700 mb-4">{book.book_description}</p>
+                    <div className="text-gray-700 mb-4 mt-4 text-lg">
+                        <p>
+                            {isExpanded ? book.book_description : `${book.book_description.slice(0, 200)}...`}
+                        </p>
+                        <button
+                            onClick={toggleExpanded}
+                            className="inline-flex text-blue-500 hover:underline mt-2"
+                        >
+                            {isExpanded ? "Thu gọn" : "Xem thêm"}
+                        </button>
+                    </div>
 
                     {/* Genres */}
-                    <div className="flex flex-wrap gap-2">
-                        <span className="bg-gray-200 text-gray-800 text-sm px-3 py-1 rounded-full">
-                            {book.genre}
-                        </span>
+                    <div className="flex flex-wrap gap-2 mb-4">
+                        {book.genres && book.genres.split(',').map((genre, index) => (
+                            <span 
+                                key={index} 
+                                className={`text-sm px-3 py-1 rounded-full ${random_color[index % random_color.length]}`}
+                            >
+                                {genre.trim()}
+                            </span>
+                        ))}
                     </div>
+
+                    {/* Publish year */}
+                    <p className="text-gray-700 mb-4">First published {book.publication_year}</p>
+
+                    <div className="flex flex-col space-y-5">
+                        {/* Language */}
+                        <div className="grid grid-cols-4">
+                            <p className="font-medium text-gray-700">Language:</p>
+                            <p className="text-gray-700">{book.book_language}</p>
+                        </div>
+
+                        {/* Format */}
+                        <div className="grid grid-cols-4">
+                            <p className="font-medium text-gray-700">Format:</p>
+                            <p className="text-gray-700">{book.book_type}</p>
+                        </div>
+
+                        {/* Inventory Quantity */}
+                        <div className="grid grid-cols-4">
+                            <p className="font-medium text-gray-700">Inventory Quantity:</p>
+                            <p className="text-gray-700">{book.inventory_quantity}</p>
+                        </div>
+                    </div>
+
                 </div>
             </div>
         </div>

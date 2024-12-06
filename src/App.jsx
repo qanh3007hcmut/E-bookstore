@@ -7,7 +7,8 @@ import Login from '../src/pages/Login/Login'
 import Dashboard from '../src/pages/Dashboard/Dashboard'
 import Book from '../src/component/BookTheme'
 import Cart from '../src/pages/Cart/Cart'
-
+import Order from '../src/pages/Orderhistory/Orderhistory'
+import Orderhistory from "../src/pages/Orderhistory/Orderhistory";
 
 const App = () => {
   
@@ -41,10 +42,15 @@ const App = () => {
         <Route
           path="/dashboard/book/:bookID"
           element={<Book/>}/>
-        {/* Book theme */}
+        {/* Cart */}
         <Route
           path="/dashboard/cart"
           element={<Cart/>}/>
+
+        {/* Order*/}
+        <Route
+          path="/dashboard/cart/history"
+          element={<Orderhistory/>}/>
       </Routes>
     </Router>
   );

@@ -1,30 +1,105 @@
 /* eslint-disable no-unused-vars */
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import PropTypes from 'prop-types'
 import Select from "react-select";
-
+import axios from "axios";
 // Sample data for books
 const BookGallery = ({ books, gotoID }) => {
   const [filters, setFilters] = useState({
-    genre: null,
+    genre: [],
     series: null,
     author: null,
     publisher: null,
     favorite: false,
     price: { min: 0, max: 100 },
   });
+  // Lưu và lấy author data
+  const [authors, setAuthors] = useState([]);
+  const [publishers, setPublishers] = useState([]);
+  const [series, setSeries] = useState([])
+  const [genres, setGenres] = useState([])
 
+ 
+  useEffect(() => {
+    const fetchAuthors = async () => {
+      try {
+        const response = await axios.get("http://localhost:3000/api/books/authors"); 
+        const authors = response.data.authors;
+        const authorOptions = authors.map((author) => ({
+          value: author,
+          label: author,
+        }));
+        setAuthors(authorOptions); 
+      } catch (error) {
+        console.error("Error fetching authors:", error);
+      }
+    };
+    const fetchPublishers = async () => {
+      try {
+        const response = await axios.get("http://localhost:3000/api/books/publishers"); 
+        const publishers = response.data.publishers;
+        const publisherOptions = publishers.map((publisher) => ({
+          value: publisher,
+          label: publisher,
+        }));
+        setPublishers(publisherOptions); 
+      } catch (error) {
+        console.error("Error fetching publisher:", error);
+      }
+    };
+    const fetchSeries = async () => {
+      try {
+        const response = await axios.get("http://localhost:3000/api/books/series"); 
+        const series = response.data.series;
+        const seriesOptions = series.map((Aseries) => ({
+          value: Aseries,
+          label: Aseries,
+        }));
+        setSeries(seriesOptions); 
+      } catch (error) {
+        console.error("Error fetching series:", error);
+      }
+    };
+    const fetchGenres = async () => {
+      try {
+        const response = await axios.get("http://localhost:3000/api/books/genres"); 
+        const genres = response.data.genres;
+        const genresOptions = genres.map((genre) => ({
+          value: genre,
+          label: genre,
+        }));
+        setGenres(genresOptions); 
+      } catch (error) {
+        console.error("Error fetching genres:", error);
+      }
+    };
+
+    const fetchFilteData = async () => {
+      fetchAuthors();
+      fetchPublishers();
+      fetchSeries();
+      fetchGenres();
+    }
+
+    fetchFilteData()
+
+  }, []);
   const [currentPage, setCurrentPage] = useState(1);
   const [booksPerPage] = useState(3);
 
   // Handle filter changes
   const handleFilterChange = (selectedOption, actionMeta) => {
     const { name } = actionMeta;
+    
     setFilters((prev) => ({
       ...prev,
       [name]: selectedOption,
     }));
   };
+
+  useEffect(()=>{
+    console.log(filters.genre)
+  }, [filters.genre])
 
   const handleFavoriteChange = (e) => {
     setFilters((prev) => ({
@@ -43,9 +118,12 @@ const BookGallery = ({ books, gotoID }) => {
 
   const filteredBooks = books.filter((book) => {
     return (
-      (filters.genre ? book.genre === filters.genre.value : true) &&
-      (filters.series ? book.series === filters.series.value : true) &&
-      (filters.author ? book.author === filters.author.value : true) &&
+      (filters.genre ? 
+        filters.genre.every((selectedGenre) => 
+          book.genres && book.genres.split(',').includes(selectedGenre.value)
+        ) : true) &&
+      (filters.series ? book.series_name === filters.series.value : true) &&
+      (filters.author ? book.authors && book.authors === filters.author.value : true) &&
       (filters.publisher ? book.publisher === filters.publisher.value : true) &&
       (filters.favorite ? book.isFavorite : true) &&
       book.book_price >= filters.price.min && book.book_price <= filters.price.max
@@ -66,7 +144,7 @@ const BookGallery = ({ books, gotoID }) => {
   };
 
   return (
-    <div className="container mx-auto p-4">
+    <div className="pt-28 container mx-auto p-4">
       <div className="flex flex-col md:flex-row space-x-4">
         {/* Filter Section */}
         <div className="w-full md:w-1/4 p-4 border bg-gray-100 rounded-md">
@@ -77,13 +155,9 @@ const BookGallery = ({ books, gotoID }) => {
             <label htmlFor="genre" className="block mb-2">Genre</label>
             <Select
               name="genre"
-              options={[
-                { value: "Fiction", label: "Fiction" },
-                { value: "Science", label: "Science" },
-                { value: "History", label: "History" },
-                // Add more genres here...
-              ]}
+              options={genres}
               value={filters.genre}
+              isMulti 
               onChange={handleFilterChange}
               isClearable
               placeholder="Select genre"
@@ -95,12 +169,7 @@ const BookGallery = ({ books, gotoID }) => {
             <label htmlFor="series" className="block mb-2">Series</label>
             <Select
               name="series"
-              options={[
-                { value: "Series A", label: "Series A" },
-                { value: "Series B", label: "Series B" },
-                { value: "Series C", label: "Series C" },
-                // Add more series here...
-              ]}
+              options={series}
               value={filters.series}
               onChange={handleFilterChange}
               isClearable
@@ -113,12 +182,7 @@ const BookGallery = ({ books, gotoID }) => {
             <label htmlFor="author" className="block mb-2">Author</label>
             <Select
               name="author"
-              options={[
-                { value: "Author 1", label: "Author 1" },
-                { value: "Author 2", label: "Author 2" },
-                { value: "Author 3", label: "Author 3" },
-                // Add more authors here...
-              ]}
+              options={authors}
               value={filters.author}
               onChange={handleFilterChange}
               isClearable
@@ -131,12 +195,7 @@ const BookGallery = ({ books, gotoID }) => {
             <label htmlFor="publisher" className="block mb-2">Publisher</label>
             <Select
               name="publisher"
-              options={[
-                { value: "Publisher A", label: "Publisher A" },
-                { value: "Publisher B", label: "Publisher B" },
-                { value: "Publisher C", label: "Publisher C" },
-                // Add more publishers here...
-              ]}
+              options={publishers}
               value={filters.publisher}
               onChange={handleFilterChange}
               isClearable
@@ -204,47 +263,46 @@ const BookGallery = ({ books, gotoID }) => {
       </div>
 
       {/* Pagination Section */}
-      <nav aria-label="Page navigation example">
-        <ul className="inline-flex -space-x-px text-sm">
-          {/* Previous Button */}
-          <li>
-            <a
-              href="#"
-              onClick={() => handlePageChange(currentPage - 1)}
-              className={`flex items-center justify-center px-3 h-8 ms-0 leading-tight text-gray-500 bg-white border border-e-0 border-gray-300 rounded-s-lg hover:bg-gray-100 hover:text-gray-700 ${currentPage === 1 ? "disabled opacity-50" : ""}`}
-            >
-              Previous
-            </a>
-          </li>
+      <div className="flex justify-center items-center">      
+        <nav aria-label="Page navigation example">
+          <ul className="inline-flex -space-x-px text-sm">
+            {/* Previous Button */}
+            <button>
+              <a
+                onClick={() => handlePageChange(currentPage - 1)}
+                className={`flex items-center justify-center px-3 h-8 ms-0 leading-tight text-gray-500 bg-white border border-e-0 border-gray-300 rounded-s-lg hover:bg-gray-100 hover:text-gray-700 ${currentPage === 1 ? "disabled opacity-50" : ""}`}
+              >
+                Previous
+              </a>
+            </button>
 
-          {/* Page Numbers */}
-          {[...Array(totalPages).keys()].map((index) => {
-            const pageNumber = index + 1;
-            return (
-              <li key={pageNumber}>
-                <a
-                  href="#"
-                  onClick={() => handlePageChange(pageNumber)}
-                  className={`flex items-center justify-center px-3 h-8 leading-tight text-gray-500 bg-white border border-gray-300 hover:bg-gray-100 hover:text-gray-700 ${currentPage === pageNumber ? "text-blue-600 bg-blue-50 hover:bg-blue-100" : ""}`}
-                >
-                  {pageNumber}
-                </a>
-              </li>
-            );
-          })}
+            {/* Page Numbers */}
+            {[...Array(totalPages).keys()].map((index) => {
+              const pageNumber = index + 1;
+              return (
+                <button key={pageNumber}>
+                  <a
+                    onClick={() => handlePageChange(pageNumber)}
+                    className={`flex items-center justify-center px-3 h-8 leading-tight border border-gray-300 hover:bg-gray-100 hover:text-gray-700 ${currentPage === pageNumber ? "text-white bg-gray-600 hover:bg-blue-100" : "text-gray-700 bg-white"}`}
+                  >
+                    {pageNumber}
+                  </a>
+                </button>
+              );
+            })}
 
-          {/* Next Button */}
-          <li>
-            <a
-              href="#"
-              onClick={() => handlePageChange(currentPage + 1)}
-              className={`flex items-center justify-center px-3 h-8 leading-tight text-gray-500 bg-white border border-e-0 border-gray-300 rounded-e-lg hover:bg-gray-100 hover:text-gray-700 ${currentPage === totalPages ? "disabled opacity-50" : ""}`}
-            >
-              Next
-            </a>
-          </li>
-        </ul>
-      </nav>
+            {/* Next Button */}
+            <button>
+              <a
+                onClick={() => handlePageChange(currentPage + 1)}
+                className={`flex items-center justify-center px-3 h-8 leading-tight text-gray-500 bg-white border border-e-0 border-gray-300 rounded-e-lg hover:bg-gray-100 hover:text-gray-700 ${currentPage === totalPages ? "disabled opacity-50" : ""}`}
+              >
+                Next
+              </a>
+            </button>
+          </ul>
+        </nav>
+      </div>
     </div>
   );
 };

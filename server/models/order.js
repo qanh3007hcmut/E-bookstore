@@ -14,6 +14,7 @@ const getOrders = async (username) => {
             oi.book_id,
             b.book_name,
             b.book_price,
+            b.image_name,
             oi.quantity,
             oh.order_history_id
         FROM
