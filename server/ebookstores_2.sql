@@ -1,8 +1,29 @@
 CREATE DATABASE Ebookstores;
 USE Ebookstores;
+-- MySQL dump 10.13  Distrib 8.0.40, for Win64 (x86_64)
+--
+-- Host: localhost    Database: ebookstores
+-- ------------------------------------------------------
+-- Server version	8.0.40
+
+/*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
+/*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
+/*!40101 SET @OLD_COLLATION_CONNECTION=@@COLLATION_CONNECTION */;
+/*!50503 SET NAMES utf8mb4 */;
+/*!40103 SET @OLD_TIME_ZONE=@@TIME_ZONE */;
+/*!40103 SET TIME_ZONE='+00:00' */;
+/*!40014 SET @OLD_UNIQUE_CHECKS=@@UNIQUE_CHECKS, UNIQUE_CHECKS=0 */;
+/*!40014 SET @OLD_FOREIGN_KEY_CHECKS=@@FOREIGN_KEY_CHECKS, FOREIGN_KEY_CHECKS=0 */;
+/*!40101 SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='NO_AUTO_VALUE_ON_ZERO' */;
+/*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
+
+--
+-- Table structure for table `author`
+--
 
 DROP TABLE IF EXISTS `author`;
-
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `author` (
   `author_id` int NOT NULL AUTO_INCREMENT,
   `author_name` varchar(255) NOT NULL,
@@ -11,7 +32,11 @@ CREATE TABLE `author` (
   `author_dob` date DEFAULT NULL,
   PRIMARY KEY (`author_id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=19 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
 
+--
+-- Dumping data for table `author`
+--
 
 LOCK TABLES `author` WRITE;
 /*!40000 ALTER TABLE `author` DISABLE KEYS */;
@@ -104,7 +129,7 @@ CREATE TABLE `customer_account` (
 
 LOCK TABLES `customer_account` WRITE;
 /*!40000 ALTER TABLE `customer_account` DISABLE KEYS */;
-INSERT INTO `customer_account` VALUES ('user1','Password1',NULL,NULL,NULL,NULL);
+INSERT INTO `customer_account` VALUES ('user1','Password1','Nguyễn Quốc Anh','0123456789','webapp@hcmut.edu.vn','123 Banglades, The United States');
 /*!40000 ALTER TABLE `customer_account` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -131,6 +156,7 @@ CREATE TABLE `discount` (
 
 LOCK TABLES `discount` WRITE;
 /*!40000 ALTER TABLE `discount` DISABLE KEYS */;
+INSERT INTO `discount` VALUES ('BLACKFRIDAY','user1',20);
 /*!40000 ALTER TABLE `discount` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -227,7 +253,7 @@ CREATE TABLE `invoice` (
   PRIMARY KEY (`invoice_id`),
   KEY `customer_id` (`customer_id`),
   CONSTRAINT `invoice_ibfk_1` FOREIGN KEY (`customer_id`) REFERENCES `customer_account` (`username`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=10 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -236,6 +262,7 @@ CREATE TABLE `invoice` (
 
 LOCK TABLES `invoice` WRITE;
 /*!40000 ALTER TABLE `invoice` DISABLE KEYS */;
+INSERT INTO `invoice` VALUES (1,'2024-12-06','user1','By Credit',42),(3,'2024-12-06','user1','Completed',500),(4,'2024-12-06','user1','By Credits',200),(5,'2024-12-06','user1','By Credits',109),(6,'2024-12-06','user1','By Credits',109),(7,'2024-12-06','user1','By Credits',200),(8,'2024-12-06','user1','By Credits',109),(9,'2024-12-06','user1','By Credits',109);
 /*!40000 ALTER TABLE `invoice` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -262,7 +289,7 @@ CREATE TABLE `order` (
   CONSTRAINT `order_ibfk_2` FOREIGN KEY (`discount_id`) REFERENCES `discount` (`discount_id`),
   CONSTRAINT `order_ibfk_3` FOREIGN KEY (`order_history_id`) REFERENCES `order_history` (`order_history_id`),
   CONSTRAINT `order_ibfk_4` FOREIGN KEY (`invoice_id`) REFERENCES `invoice` (`invoice_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=7 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=16 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -271,7 +298,7 @@ CREATE TABLE `order` (
 
 LOCK TABLES `order` WRITE;
 /*!40000 ALTER TABLE `order` DISABLE KEYS */;
-INSERT INTO `order` VALUES (1,'user1','Pending Payment',NULL,1,NULL),(2,'user1','Shipping',NULL,2,NULL),(3,'user1','Awaiting Delivery',NULL,3,NULL),(4,'user1','Completed',NULL,4,NULL),(5,'user1','Canceled',NULL,5,NULL),(6,'user1','Refund',NULL,6,NULL);
+INSERT INTO `order` VALUES (1,'user1','Pending Payment',NULL,1,NULL),(2,'user1','Shipping',NULL,2,NULL),(3,'user1','Awaiting Delivery',NULL,3,NULL),(4,'user1','Completed',NULL,4,NULL),(5,'user1','Canceled',NULL,5,NULL),(6,'user1','Refund',NULL,6,NULL),(7,'user1','Completed','BLACKFRIDAY',7,1),(9,'user1','Pending',NULL,11,3),(10,'user1','Pending Payment',NULL,12,4),(11,'user1','Completed',NULL,13,5),(12,'user1','Completed',NULL,14,6),(13,'user1','Pending Payment',NULL,15,7),(14,'user1','Completed',NULL,16,8),(15,'user1','Completed',NULL,17,9);
 /*!40000 ALTER TABLE `order` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -288,7 +315,7 @@ CREATE TABLE `order_history` (
   PRIMARY KEY (`order_history_id`),
   KEY `username` (`username`),
   CONSTRAINT `order_history_ibfk_1` FOREIGN KEY (`username`) REFERENCES `customer_account` (`username`)
-) ENGINE=InnoDB AUTO_INCREMENT=7 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=18 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -297,7 +324,7 @@ CREATE TABLE `order_history` (
 
 LOCK TABLES `order_history` WRITE;
 /*!40000 ALTER TABLE `order_history` DISABLE KEYS */;
-INSERT INTO `order_history` VALUES (1,'user1'),(2,'user1'),(3,'user1'),(4,'user1'),(5,'user1'),(6,'user1');
+INSERT INTO `order_history` VALUES (1,'user1'),(2,'user1'),(3,'user1'),(4,'user1'),(5,'user1'),(6,'user1'),(7,'user1'),(8,'user1'),(11,'user1'),(12,'user1'),(13,'user1'),(14,'user1'),(15,'user1'),(16,'user1'),(17,'user1');
 /*!40000 ALTER TABLE `order_history` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -312,10 +339,11 @@ CREATE TABLE `order_item` (
   `book_id` int NOT NULL,
   `order_id` int NOT NULL,
   `quantity` int DEFAULT NULL,
-  PRIMARY KEY (`book_id`),
+  PRIMARY KEY (`order_id`,`book_id`),
   KEY `order_id` (`order_id`),
-  CONSTRAINT `order_item_ibfk_1` FOREIGN KEY (`order_id`) REFERENCES `order` (`order_id`),
-  CONSTRAINT `order_item_ibfk_2` FOREIGN KEY (`book_id`) REFERENCES `book` (`book_id`)
+  KEY `fk_orderitem_book` (`book_id`),
+  CONSTRAINT `fk_orderitem_book` FOREIGN KEY (`book_id`) REFERENCES `book` (`book_id`),
+  CONSTRAINT `order_item_ibfk_1` FOREIGN KEY (`order_id`) REFERENCES `order` (`order_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -325,7 +353,7 @@ CREATE TABLE `order_item` (
 
 LOCK TABLES `order_item` WRITE;
 /*!40000 ALTER TABLE `order_item` DISABLE KEYS */;
-INSERT INTO `order_item` VALUES (1,1,1),(2,1,2),(3,2,3),(4,3,4),(5,4,5),(6,5,6),(7,6,7);
+INSERT INTO `order_item` VALUES (1,1,1),(2,1,2),(3,2,3),(4,3,4),(5,4,5),(6,5,6),(7,6,7),(2,7,3),(5,7,3),(1,9,2),(2,9,1),(3,10,1),(7,10,1),(1,11,2),(2,11,3),(1,12,2),(2,12,3),(7,13,1),(10,13,2),(1,14,2),(2,14,3),(1,15,2),(2,15,3);
 /*!40000 ALTER TABLE `order_item` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -445,4 +473,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2024-12-06 21:03:21
+-- Dump completed on 2024-12-06 23:21:03
