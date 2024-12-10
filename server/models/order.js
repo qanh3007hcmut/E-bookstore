@@ -33,7 +33,9 @@ const getOrders = async (username) => {
         JOIN
             Book b ON oi.book_id = b.book_id
         WHERE
-            ca.username = ?;
+            ca.username = ?
+        order by 
+            o.order_id DESC;
     `;
     const [rows] = await database.query(query, [username]);
     return rows;

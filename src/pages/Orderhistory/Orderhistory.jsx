@@ -36,6 +36,7 @@ const Orderhistory = () => {
 
     useEffect(() => {
         fetchOrder(username);
+        console.log(orders)
     },[])
 
     return (

@@ -12,7 +12,7 @@ const History = ({orders}) => {
             }
             grouped[order.order_id].push(order);
         });
-        return Object.entries(grouped); // Convert to an array of [order_id, items[]]
+        return Object.entries(grouped).sort((a, b) => b[0] - a[0]);// Convert to an array of [order_id, items[]]
     }, [orders]);
 
     return (
